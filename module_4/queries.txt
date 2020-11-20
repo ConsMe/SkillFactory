@@ -1,0 +1,6 @@
+Задание 4.1  
+
+SELECT a.city
+FROM dst_project.airports a
+GROUP BY a.city
+HAVING count(a.airport_code) > 1
