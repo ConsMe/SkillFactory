@@ -88,4 +88,25 @@ SELECT avg(extract(EPOCH
                    FROM (f.scheduled_arrival - f.scheduled_departure))) / 60
 FROM dst_project.flights f
 
+Задание 4.5
+
+Вопрос 1
+SELECT s.fare_conditions,
+       count(s.*)
+FROM dst_project.seats s
+WHERE aircraft_code = 'SU9'
+GROUP BY s.fare_conditions
+
+Вопрос 2
+SELECT b.total_amount
+FROM dst_project.bookings b
+ORDER BY b.total_amount
+LIMIT 1
+
+Вопрос 3
+SELECT b.seat_no
+FROM dst_project.boarding_passes b
+JOIN dst_project.tickets t ON t.ticket_no = b.ticket_no
+WHERE t.passenger_id = '4313 788533'
+
 
