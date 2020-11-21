@@ -61,3 +61,31 @@ FROM dst_project.flights f
 WHERE f.actual_arrival IS NOT NULL
 ORDER BY (f.actual_arrival - f.scheduled_arrival) DESC
 LIMIT 1
+
+Задание 4.4
+
+Вопрос 1
+SELECT f.scheduled_departure
+FROM dst_project.flights f
+ORDER BY f.scheduled_departure
+LIMIT 1
+
+Вопрос 2
+SELECT extract(EPOCH
+               FROM (f.scheduled_arrival - f.scheduled_departure)) / 60 duration
+FROM dst_project.flights f
+ORDER BY duration DESC
+LIMIT 1
+
+Вопрос 3
+SELECT f.*
+FROM dst_project.flights f
+ORDER BY (f.scheduled_arrival - f.scheduled_departure) DESC
+LIMIT 1
+
+Вопрос 4
+SELECT avg(extract(EPOCH
+                   FROM (f.scheduled_arrival - f.scheduled_departure))) / 60
+FROM dst_project.flights f
+
+
