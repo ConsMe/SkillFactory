@@ -4,3 +4,20 @@ SELECT a.city
 FROM dst_project.airports a
 GROUP BY a.city
 HAVING count(a.airport_code) > 1
+
+Задание 4.2
+
+Вопрос 1
+SELECT count(DISTINCT f.status)
+FROM dst_project.flights f
+
+Вопрос 2
+SELECT count(f.*)
+FROM dst_project.flights f
+WHERE f.status = 'Departed'
+
+Вопрос 3
+SELECT count(s.*)
+FROM dst_project.seats s
+JOIN dst_project.aircrafts a ON a.aircraft_code = s.aircraft_code
+WHERE a.model = 'Boeing 777-300'
