@@ -117,8 +117,38 @@ FROM dst_project.flights f
 JOIN dst_project.airports a ON a.airport_code = f.arrival_airport
 WHERE f.status = 'Arrived'
   AND a.city = 'Anapa'
+  AND extract(YEAR FROM f.actual_arrival) = 2017
 
 Вопрос 2
-
+SELECT count(f.*)
+FROM dst_project.flights f
+JOIN dst_project.airports a ON a.airport_code = f.departure_airport
+WHERE extract(MONTH FROM f.actual_departure) in (1,2,12)
+  AND extract(YEAR FROM f.actual_departure) = 2017
+  AND a.city = 'Anapa'
 
 Вопрос 3
+SELECT count(f.*)
+FROM dst_project.flights f
+JOIN dst_project.airports a ON a.airport_code = f.departure_airport
+WHERE f.status = 'Cancelled'
+  AND a.city = 'Anapa'
+  
+Вопрос 4
+SELECT count(f.*)
+FROM dst_project.flights f
+JOIN dst_project.airports a1 ON a1.airport_code = f.departure_airport
+JOIN dst_project.airports a2 ON a2.airport_code = f.arrival_airport
+WHERE a1.city = 'Anapa'
+  AND a2.city != 'Moscow'
+  
+Вопрос 5
+SELECT c.model
+FROM dst_project.flights f
+JOIN dst_project.airports a ON a.airport_code = f.departure_airport
+JOIN dst_project.seats s ON s.aircraft_code = f.aircraft_code
+JOIN dst_project.aircrafts c ON c.aircraft_code = s.aircraft_code
+WHERE a.city = 'Anapa'
+GROUP BY c.model
+ORDER BY count(s.*) DESC
+LIMIT 1
