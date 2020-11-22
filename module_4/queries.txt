@@ -109,4 +109,16 @@ FROM dst_project.boarding_passes b
 JOIN dst_project.tickets t ON t.ticket_no = b.ticket_no
 WHERE t.passenger_id = '4313 788533'
 
+Задание 5.1
 
+Вопрос 1
+SELECT count(f.*)
+FROM dst_project.flights f
+JOIN dst_project.airports a ON a.airport_code = f.arrival_airport
+WHERE f.status = 'Arrived'
+  AND a.city = 'Anapa'
+
+Вопрос 2
+
+
+Вопрос 3
