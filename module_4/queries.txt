@@ -173,7 +173,7 @@ flight_ids as (
 )
 , economy_revenues as (
     select
-        t.flight_id, sum(t.amount) amount
+        t.flight_id, sum(t.amount) amount, count(t.amount) quantity
     from
         dst_project.ticket_flights t
     where
@@ -185,7 +185,7 @@ flight_ids as (
 )
 , business_revenues as (
     select
-        t.flight_id, sum(t.amount) amount
+        t.flight_id, sum(t.amount) amount, count(t.amount) quantity
     from
         dst_project.ticket_flights t
     where
@@ -212,7 +212,10 @@ SELECT
     (ac.economy_seats + ac.business_seats) all_seats,
     er.amount economy_revenue,
     br.amount business_revenue,
-    (er.amount + br.amount) total_amount
+    (er.amount + br.amount) total_amount,
+    er.quantity economy_quantity,
+    br.quantity business_quantity,
+    (er.quantity + br.quantity) total_quantity
 FROM
     dst_project.flights f
 join
