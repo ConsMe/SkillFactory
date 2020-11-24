@@ -152,3 +152,93 @@ WHERE a.city = 'Anapa'
 GROUP BY c.model
 ORDER BY count(s.*) DESC
 LIMIT 1
+
+
+ПРОЕКТ
+
+with airport_codes as (
+    select distinct a.airport_code from dst_project.airports a where a.city = 'Anapa' 
+),
+flight_ids as (
+    select
+        distinct f.flight_id
+    from
+        dst_project.flights f
+    where
+        f.departure_airport in (select airport_code from airport_codes)
+    and
+        (date_trunc('month', f.scheduled_departure) in ('2017-01-01','2017-02-01', '2017-12-01'))
+    and 
+        f.status not in ('Cancelled')
+)
+, economy_revenues as (
+    select
+        t.flight_id, sum(t.amount) amount
+    from
+        dst_project.ticket_flights t
+    where
+        t.flight_id in (select flight_id from flight_ids)
+    and
+        t.fare_conditions = 'Economy'
+    group by
+        t.flight_id
+)
+, business_revenues as (
+    select
+        t.flight_id, sum(t.amount) amount
+    from
+        dst_project.ticket_flights t
+    where
+        t.flight_id in (select flight_id from flight_ids)
+    and
+        t.fare_conditions = 'Business'
+    group by
+        t.flight_id
+)
+SELECT
+    f.flight_id,
+    f.flight_no,
+    'Anapa' departure_city,
+    ap.city arrival_city,
+    f.scheduled_departure,
+    f.scheduled_arrival,
+    to_char(f.scheduled_arrival - f.scheduled_departure, 'HH24:MI') flight_duration,
+    ac.model aircraft_model,
+    ac.range aircraft_range,
+    ap.longitude,
+    ap.latitude,
+    ac.economy_seats,
+    ac.business_seats,
+    (ac.economy_seats + ac.business_seats) all_seats,
+    er.amount economy_revenue,
+    br.amount business_revenue,
+    (er.amount + br.amount) total_amount
+FROM
+    dst_project.flights f
+join
+    dst_project.airports ap
+on
+    ap.airport_code = f.arrival_airport
+join
+    (select
+        a.*, count(distinct s1.seat_no) economy_seats, count(distinct s2.seat_no) business_seats
+    from
+        dst_project.aircrafts a
+    left join
+        dst_project.seats s1 on s1.aircraft_code = a.aircraft_code and s1.fare_conditions = 'Economy'
+    left join
+        dst_project.seats s2 on s2.aircraft_code = a.aircraft_code and s2.fare_conditions = 'Business'
+    group by
+        a.aircraft_code, a.model, a.range) ac
+on
+    ac.aircraft_code = f.aircraft_code
+left join
+    economy_revenues er
+on
+    er.flight_id = f.flight_id
+left join
+    business_revenues br
+on
+    br.flight_id = f.flight_id
+where
+    f.flight_id in (select flight_id from flight_ids)
